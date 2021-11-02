@@ -7,7 +7,7 @@ app.use(express.json());
 
 const users = [];
 
-function verifyUserExists(req, res, next)
+function checksExistsUserAccount(req, res, next)
 {
     const { username } = req.headers;
 
@@ -22,7 +22,7 @@ function verifyUserExists(req, res, next)
     return next();
 }
 
-function getTodoItem(req, res, next)
+function checksTodoExists(req, res, next)
 {
     const { id } = req.params;
     const { user } = req;
@@ -67,13 +67,13 @@ app.post('/users', (req, res) => {
     return res.status(201).send(userData);
 });
 
-app.get('/todos', verifyUserExists, (req, res) => {
+app.get('/todos', checksExistsUserAccount, (req, res) => {
     const { user } = req;
 
     return res.send(user.todos);
 });
 
-app.post('/todos', verifyUserExists, (req, res) => {
+app.post('/todos', checksExistsUserAccount, (req, res) => {
     const { title, deadline } = req.body;
     const { user } = req;
 
@@ -90,7 +90,7 @@ app.post('/todos', verifyUserExists, (req, res) => {
     return res.status(201).send(todoData);
 });
 
-app.put('/todos/:id', verifyUserExists, getTodoItem, (req,res) => {
+app.put('/todos/:id', checksExistsUserAccount, checksTodoExists, (req,res) => {
     
     const { title, deadline } = req.body;
     const { todo } = req;
@@ -101,7 +101,7 @@ app.put('/todos/:id', verifyUserExists, getTodoItem, (req,res) => {
     return res.send(todo);
 });
 
-app.patch('/todos/:id/done', verifyUserExists, getTodoItem, (req, res) => {
+app.patch('/todos/:id/done', checksExistsUserAccount, checksTodoExists, (req, res) => {
     const { todo } = req;
 
     todo.done = true;
@@ -109,7 +109,7 @@ app.patch('/todos/:id/done', verifyUserExists, getTodoItem, (req, res) => {
     return res.send(todo);
 });
 
-app.delete('/todos/:id', verifyUserExists, getTodoItem, (req, res) => {
+app.delete('/todos/:id', checksExistsUserAccount, checksTodoExists, (req, res) => {
     const { todo, user } = req;
 
     user.todos.splice(todo, 1)
